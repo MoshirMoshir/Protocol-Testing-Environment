@@ -26,11 +26,11 @@ def main():
     timestamp = "2024-01-01T12:00:00Z"
     key = get_random_bytes(16)  # AES key for metadata encryption
 
-    # Iterations (easily changeable)
-    iterations = 100
+    # Iterations
+    iterations = 1000
 
     print("\n" + "-" * 50)  # Separator line
-    
+
     # AES (CBC) Test
     aes_total_enc, aes_avg_enc = measure_average_time(aes_encrypt, iterations, aes_key, message, label="AES Encrypt")
     aes_total_dec, aes_avg_dec = measure_average_time(aes_decrypt, iterations, aes_key, aes_encrypt(aes_key, message), label="AES Decrypt")
