@@ -102,4 +102,45 @@ Due to my limitations in accessing proper APIs to directly simulate SMS messagin
 ---
 
 ## **Conclusion**
-The Protocol Testing Environment (PTE) provides a robust framework for testing and benchmarking encryption and authentication protocols tailored to SMS security. By addressing the unique challenges of SMS, this project aims to propose feasible solutions for strengthening the security of text messaging systems, ensuring privacy and protection for millions of users worldwide.
+
+The Protocol Testing Environment (PTE) demonstrates a robust framework for benchmarking encryption and authentication protocols, providing insights into their performance and suitability for secure SMS messaging systems. The results highlight the following key takeaways:
+
+### **Performance Analysis**
+1. **Symmetric Encryption:**
+   - **AES-CBC** and **AES-GCM** both showcase exceptional encryption and decryption speeds. However, AES-GCM outperforms AES-CBC due to its built-in authentication, making it ideal for modern secure messaging protocols.
+   - **ChaCha20-Poly1305** delivers comparable speeds to AES-GCM, with slightly better performance, making it a strong alternative for environments without hardware acceleration for AES.
+
+2. **Asymmetric Encryption:**
+   - **RSA** demonstrates significantly slower decryption times compared to encryption, highlighting its computational intensity, particularly for larger keys. This limits its use to secure key exchange rather than direct encryption.
+   - **ECDH** and **Ephemeral ECDH** offer lightweight, efficient key exchange mechanisms. Ephemeral ECDH introduces forward secrecy without compromising performance, a critical feature for modern secure messaging.
+
+3. **Authentication:**
+   - **HMAC** is the fastest protocol, delivering negligible overhead, making it ideal for message integrity checks.
+   - **ECDSA** is slower than HMAC but provides a secure mechanism for message authentication, with reasonable performance for signing and verifying messages.
+
+### **SMS-Specific Challenges**
+1. **Message Fragmentation:**
+   - Successfully handled encrypted messages exceeding the SMS 160-character limit by splitting and reassembling fragments. This ensures compatibility with SMS infrastructure while maintaining the integrity of encrypted data.
+   
+2. **Metadata Obfuscation:**
+   - Simulated encryption of SMS metadata (e.g., sender, recipient, and timestamp) was achieved with AES-GCM, demonstrating its feasibility for protecting sensitive metadata. This approach mirrors real-world solutions like the "sealed sender" feature in Signal.
+
+### **Key Findings**
+- **Best Overall Protocol for SMS:** AES-GCM strikes a balance between performance, security, and ease of implementation, making it highly suitable for secure SMS systems.
+- **Asymmetric Key Exchange:** ECDH, particularly with ephemeral keys, is the most efficient and secure solution for establishing shared secrets.
+- **Authentication Efficiency:** HMAC is ideal for lightweight integrity checks, while ECDSA provides robust digital signatures for message authentication when needed.
+
+### **Recommendations**
+1. **Protocol Selection:**
+   - Implement AES-GCM or ChaCha20-Poly1305 for message encryption, depending on hardware capabilities.
+   - Use Ephemeral ECDH for secure key exchange and forward secrecy.
+
+2. **SMS Infrastructure Enhancements:**
+   - Support fragmentation and reassembly mechanisms natively in SMS infrastructure to handle encrypted payloads efficiently.
+   - Incorporate metadata obfuscation techniques to prevent sensitive information leakage.
+
+3. **Future Considerations:**
+   - Explore lightweight cryptographic algorithms for constrained environments (e.g., IoT devices).
+   - Investigate seamless integration of secure protocols into real-world SMS systems via APIs.
+
+By addressing these challenges and leveraging the findings, SMS systems can evolve to provide a secure and reliable communication framework, ensuring user privacy and protection against modern threats. This work lays a strong foundation for future advancements in SMS security.
