@@ -2,6 +2,7 @@ from encryption.aes import aes_encrypt, aes_decrypt
 from encryption.rsa import rsa_generate_keys, rsa_encrypt, rsa_decrypt
 from encryption.hmac import hmac_authenticate, hmac_verify
 from encryption.gcm import gcm_encrypt, gcm_decrypt
+from encryption.ecdh import ecdh_key_exchange, ecdh_encrypt, ecdh_decrypt
 from test.performance import measure_average_time
 
 def main():
@@ -16,6 +17,7 @@ def main():
     # Iterations (easily changeable)
     iterations = 100
 
+    
     # AES (CBC) Test
     aes_total_enc, aes_avg_enc = measure_average_time(aes_encrypt, iterations, aes_key, message, label="AES Encrypt")
     aes_total_dec, aes_avg_dec = measure_average_time(aes_decrypt, iterations, aes_key, aes_encrypt(aes_key, message), label="AES Decrypt")
@@ -40,6 +42,14 @@ def main():
     gcm_total_dec, gcm_avg_dec = measure_average_time(gcm_decrypt, iterations, aes_key, nonce, ciphertext, tag, label="AES-GCM Decrypt")
     print(f"AES-GCM: Total Encrypt Time: {gcm_total_enc:.6f}s, Average Encrypt Time: {gcm_avg_enc:.10f}s")
     print(f"AES-GCM: Total Decrypt Time: {gcm_total_dec:.6f}s, Average Decrypt Time: {gcm_avg_dec:.10f}s")
+    
+    # ECDH Test
+    aes_key = ecdh_key_exchange()  # Perform key exchange to derive a shared key
+    ecdh_total_enc, ecdh_avg_enc = measure_average_time(ecdh_encrypt, iterations, aes_key, message, label="ECDH Encrypt")
+    nonce, ciphertext, tag = ecdh_encrypt(aes_key, message)  # Encrypt once for decryption test
+    ecdh_total_dec, ecdh_avg_dec = measure_average_time(ecdh_decrypt, iterations, aes_key, nonce, ciphertext, tag, label="ECDH Decrypt")
+    print(f"ECDH: Total Encrypt Time: {ecdh_total_enc:.6f}s, Average Encrypt Time: {ecdh_avg_enc:.10f}s")
+    print(f"ECDH: Total Decrypt Time: {ecdh_total_dec:.6f}s, Average Decrypt Time: {ecdh_avg_dec:.10f}s")
 
 if __name__ == "__main__":
     main()
