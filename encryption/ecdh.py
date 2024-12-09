@@ -26,6 +26,29 @@ def ecdh_key_exchange():
     aes_key = SHA256.new(shared_secret_bytes).digest()
     return aes_key
 
+def ecdh_ephemeral_key_exchange():
+    """
+    Performs an Ephemeral Elliptic Curve Diffie-Hellman (ECDH) key exchange.
+    Provides Forward Secrecy by using ephemeral keys for each session.
+    """
+    # Generate ephemeral keys for both parties
+    ephemeral_key_1 = ECC.generate(curve='P-256')
+    ephemeral_key_2 = ECC.generate(curve='P-256')
+
+    # Exchange public keys and compute the shared secret
+    shared_secret_1 = ephemeral_key_1.pointQ * ephemeral_key_2.d  # Party 1's computation
+    shared_secret_2 = ephemeral_key_2.pointQ * ephemeral_key_1.d  # Party 2's computation
+
+    # Ensure both parties derive the same shared secret
+    assert shared_secret_1 == shared_secret_2, "ECDH key exchange failed!"
+
+    # Convert the shared secret to bytes
+    shared_secret_bytes = int(shared_secret_1.x).to_bytes(32, byteorder='big')
+
+    # Derive a symmetric AES key from the shared secret
+    aes_key = SHA256.new(shared_secret_bytes).digest()
+    return aes_key
+
 def ecdh_encrypt(aes_key, plaintext):
     """
     Encrypts a message using AES-GCM with the derived key from ECDH.

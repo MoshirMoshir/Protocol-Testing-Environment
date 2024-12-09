@@ -2,7 +2,7 @@ from encryption.aes import aes_encrypt, aes_decrypt
 from encryption.rsa import rsa_generate_keys, rsa_encrypt, rsa_decrypt
 from encryption.hmac import hmac_authenticate, hmac_verify
 from encryption.gcm import gcm_encrypt, gcm_decrypt
-from encryption.ecdh import ecdh_key_exchange, ecdh_encrypt, ecdh_decrypt
+from encryption.ecdh import ecdh_key_exchange, ecdh_ephemeral_key_exchange, ecdh_encrypt, ecdh_decrypt
 from encryption.ecdsa import ecdsa_generate_keys, ecdsa_sign, ecdsa_verify
 from encryption.chacha20 import chacha20_encrypt, chacha20_decrypt
 from Crypto.Random import get_random_bytes
@@ -53,7 +53,15 @@ def main():
     ecdh_total_dec, ecdh_avg_dec = measure_average_time(ecdh_decrypt, iterations, aes_key, nonce, ciphertext, tag, label="ECDH Decrypt")
     print(f"ECDH: Total Encrypt Time: {ecdh_total_enc:.6f}s, Average Encrypt Time: {ecdh_avg_enc:.10f}s")
     print(f"ECDH: Total Decrypt Time: {ecdh_total_dec:.6f}s, Average Decrypt Time: {ecdh_avg_dec:.10f}s")
-    
+    """
+    # Ephemeral ECDH Test
+    ephemeral_aes_key = ecdh_ephemeral_key_exchange()  # Perform key exchange for each session
+    ephemeral_total_enc, ephemeral_avg_enc = measure_average_time(ecdh_encrypt, iterations, ephemeral_aes_key, message, label="Ephemeral ECDH Encrypt")
+    nonce, ciphertext, tag = ecdh_encrypt(ephemeral_aes_key, message)  # Encrypt once for decryption test
+    ephemeral_total_dec, ephemeral_avg_dec = measure_average_time(ecdh_decrypt, iterations, ephemeral_aes_key, nonce, ciphertext, tag, label="Ephemeral ECDH Decrypt")
+    print(f"Ephemeral ECDH: Total Encrypt Time: {ephemeral_total_enc:.6f}s, Average Encrypt Time: {ephemeral_avg_enc:.10f}s")
+    print(f"Ephemeral ECDH: Total Decrypt Time: {ephemeral_total_dec:.6f}s, Average Decrypt Time: {ephemeral_avg_dec:.10f}s")
+
     # ECDSA Test
     private_key, public_key = ecdsa_generate_keys()  # Generate key pair
     ecdsa_total_sign, ecdsa_avg_sign = measure_average_time(ecdsa_sign, iterations, private_key, message, label="ECDSA Sign")
@@ -61,7 +69,7 @@ def main():
     ecdsa_total_verify, ecdsa_avg_verify = measure_average_time(ecdsa_verify, iterations, public_key, message, signature, label="ECDSA Verify")
     print(f"ECDSA: Total Sign Time: {ecdsa_total_sign:.6f}s, Average Sign Time: {ecdsa_avg_sign:.10f}s")
     print(f"ECDSA: Total Verify Time: {ecdsa_total_verify:.6f}s, Average Verify Time: {ecdsa_avg_verify:.10f}s")
-    """
+
     # ChaCha20-Poly1305 Test
     chacha_key = get_random_bytes(32)  # ChaCha20 requires a 256-bit key
     chacha_total_enc, chacha_avg_enc = measure_average_time(chacha20_encrypt, iterations, chacha_key, message, label="ChaCha20 Encrypt")
