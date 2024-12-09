@@ -6,7 +6,7 @@ The **Protocol Testing Environment (PTE)** is a Python-based testing environment
 ---
 
 ## **Purpose**
-THe purpose of this repository is to assit my reasearch project that investigates the security flaws inherent in **Short Message Service (SMS)** and explores potential methods for improving its security. The ubiquity of SMS, particularly among Android users, makes it an attractive target for malicious actors. **Key issues include:**
+The purpose of this repository is to assit my reasearch project that investigates the security flaws inherent in **Short Message Service (SMS)** and explores potential methods for improving its security. The ubiquity of SMS, particularly among Android users, makes it an attractive target for malicious actors. **Key issues include:**
 - The absence of **end-to-end encryption**, leaving SMS vulnerable to spoofing and interception.
 - Metadata exposure, such as sender and recipient information, which can leak sensitive details.
 
