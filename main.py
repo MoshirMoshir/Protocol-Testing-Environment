@@ -1,6 +1,7 @@
 from encryption.aes import aes_encrypt, aes_decrypt
 from encryption.rsa import rsa_generate_keys, rsa_encrypt, rsa_decrypt
 from encryption.hmac import hmac_authenticate, hmac_verify
+from encryption.gcm import gcm_encrypt, gcm_decrypt
 from test.performance import measure_average_time
 
 def main():
@@ -15,7 +16,7 @@ def main():
     # Iterations (easily changeable)
     iterations = 100
 
-    # AES Test
+    # AES (CBC) Test
     aes_total_enc, aes_avg_enc = measure_average_time(aes_encrypt, iterations, aes_key, message, label="AES Encrypt")
     aes_total_dec, aes_avg_dec = measure_average_time(aes_decrypt, iterations, aes_key, aes_encrypt(aes_key, message), label="AES Decrypt")
     print(f"AES: Total Encrypt Time: {aes_total_enc:.6f}s, Average Encrypt Time: {aes_avg_enc:.10f}s")
@@ -32,6 +33,13 @@ def main():
     hmac_total_verify, hmac_avg_verify = measure_average_time(hmac_verify, iterations, hmac_key, message, hmac_authenticate(hmac_key, message), label="HMAC Verify")
     print(f"HMAC: Total Authenticate Time: {hmac_total_auth:.6f}s, Average Authenticate Time: {hmac_avg_auth:.10f}s")
     print(f"HMAC: Total Verify Time: {hmac_total_verify:.6f}s, Average Verify Time: {hmac_avg_verify:.10f}s")
+
+    # AES-GCM Test
+    gcm_total_enc, gcm_avg_enc = measure_average_time(gcm_encrypt, iterations, aes_key, message, label="AES-GCM Encrypt")
+    nonce, ciphertext, tag = gcm_encrypt(aes_key, message)  # Encrypt once for decryption test
+    gcm_total_dec, gcm_avg_dec = measure_average_time(gcm_decrypt, iterations, aes_key, nonce, ciphertext, tag, label="AES-GCM Decrypt")
+    print(f"AES-GCM: Total Encrypt Time: {gcm_total_enc:.6f}s, Average Encrypt Time: {gcm_avg_enc:.10f}s")
+    print(f"AES-GCM: Total Decrypt Time: {gcm_total_dec:.6f}s, Average Decrypt Time: {gcm_avg_dec:.10f}s")
 
 if __name__ == "__main__":
     main()
