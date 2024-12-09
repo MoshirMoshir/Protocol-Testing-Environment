@@ -3,6 +3,7 @@ from encryption.rsa import rsa_generate_keys, rsa_encrypt, rsa_decrypt
 from encryption.hmac import hmac_authenticate, hmac_verify
 from encryption.gcm import gcm_encrypt, gcm_decrypt
 from encryption.ecdh import ecdh_key_exchange, ecdh_encrypt, ecdh_decrypt
+from encryption.ecdsa import ecdsa_generate_keys, ecdsa_sign, ecdsa_verify
 from test.performance import measure_average_time
 
 def main():
@@ -17,7 +18,7 @@ def main():
     # Iterations (easily changeable)
     iterations = 100
 
-    
+    """
     # AES (CBC) Test
     aes_total_enc, aes_avg_enc = measure_average_time(aes_encrypt, iterations, aes_key, message, label="AES Encrypt")
     aes_total_dec, aes_avg_dec = measure_average_time(aes_decrypt, iterations, aes_key, aes_encrypt(aes_key, message), label="AES Decrypt")
@@ -50,6 +51,14 @@ def main():
     ecdh_total_dec, ecdh_avg_dec = measure_average_time(ecdh_decrypt, iterations, aes_key, nonce, ciphertext, tag, label="ECDH Decrypt")
     print(f"ECDH: Total Encrypt Time: {ecdh_total_enc:.6f}s, Average Encrypt Time: {ecdh_avg_enc:.10f}s")
     print(f"ECDH: Total Decrypt Time: {ecdh_total_dec:.6f}s, Average Decrypt Time: {ecdh_avg_dec:.10f}s")
+    """
+    # ECDSA Test
+    private_key, public_key = ecdsa_generate_keys()  # Generate key pair
+    ecdsa_total_sign, ecdsa_avg_sign = measure_average_time(ecdsa_sign, iterations, private_key, message, label="ECDSA Sign")
+    signature = ecdsa_sign(private_key, message)  # Sign once for verification test
+    ecdsa_total_verify, ecdsa_avg_verify = measure_average_time(ecdsa_verify, iterations, public_key, message, signature, label="ECDSA Verify")
+    print(f"ECDSA: Total Sign Time: {ecdsa_total_sign:.6f}s, Average Sign Time: {ecdsa_avg_sign:.10f}s")
+    print(f"ECDSA: Total Verify Time: {ecdsa_total_verify:.6f}s, Average Verify Time: {ecdsa_avg_verify:.10f}s")
 
 if __name__ == "__main__":
     main()
